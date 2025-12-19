@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Frontline Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        "background-light": "#F8FAFC",
+                        "background-dark": "#1F2937",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#374151",
+                        "text-light": "#1F2937",
+                        "text-dark": "#F3F4F6",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#4B5563",
+                    },
+                    fontFamily: {
+                        display: ["Roboto", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-icons { font-size: inherit; }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+    <div class="flex h-screen" id="app">
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-30 hidden md:hidden z-10"></div>
+
+        <aside class="fixed top-0 left-0 h-full w-64 bg-white dark:bg-card-dark transition-transform -translate-x-full md:relative md:translate-x-0 md:flex-shrink-0 z-20" id="sidebar">
+            <div class="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
+                <h1 class="text-xl font-bold text-primary">Frontline Portal</h1>
+                <button class="md:hidden" id="close-sidebar">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <nav class="p-4">
+                <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Quick Actions</p>
+                <ul class="mt-2 space-y-2">
+                    <li>
+                        <a href="login.html" class="w-full bg-primary text-white py-2 px-4 rounded-lg flex items-center justify-center font-semibold">
+                            <span class="material-icons mr-2">login</span>
+                            Sign Up/Sign In
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html" class="w-full bg-gray-100 dark:bg-gray-700 text-primary py-2 px-4 rounded-lg flex items-center justify-center font-semibold">
+                            <span class="material-icons mr-2">home</span>
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <button type="button" id="open-register" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg flex items-center justify-center font-semibold">
+                            <span class="material-icons mr-2">person_add</span>
+                            Register Patient
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto bg-gray-50">
+            <div class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto"></div>
+            <header class="bg-white dark:bg-card-dark shadow-sm sticky top-0 z-10">
+                <div class="mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16">
+                        <button class="md:hidden" id="open-sidebar">
+                            <span class="material-icons">menu</span>
+                        </button>
+                        <nav class="hidden md:flex items-center space-x-8">
+                            <button data-tab="patient-management" class="tab-btn text-sm font-medium text-primary border-b-2 border-primary">Patient Management</button>
+                            <button data-tab="inventory" class="tab-btn text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary">Inventory</button>
+                            <button data-tab="visits" class="tab-btn text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary">Visits</button>
+                            <button data-tab="reports" class="tab-btn text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary">Reports</button>
+                        </nav>
+                        <div class="flex items-center space-x-4">
+                            <div class="relative hidden sm:block">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                                <input class="bg-gray-100 dark:bg-gray-700 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-primary focus:border-primary" placeholder="Search" type="text" />
+                            </div>
+                            <button class="flex items-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                                EN
+                                <span class="material-icons">arrow_drop_down</span>
+                            </button>
+                            <div class="flex items-center">
+                                <img alt="A. Musa profile picture" class="rounded-full w-8 h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCknFFiRUiAfGmSoErm4-I9bC2gB4dNHdjk3slrL-Qs8_PCSkGsb4cnUjnOmnTL4twkr4nlBhRL2NvtnlpI7zTcDuMjmsuTu5XuSHm_Adqyg5VAG1gH6m2nIDkaOn00a-KQFAZq45Hm8LTJcUHaVLHO7evHRgIBll5lJeRpHi-k1B5kZFFWqL5F-8ojIR9OaQqLRiiwAZPt7-6k8ExbdzFoi8mJQkt4Nv6KBpmyfUykeVLcXR-1KFrEiTSR536_hknrBNK7sxfRfRM" />
+                                <span class="ml-2 text-sm font-medium hidden sm:block">A. Musa</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="p-4 sm:p-6 lg:p-8 space-y-6">
+                <div id="patient-management" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-card-dark p-6 rounded-lg shadow">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-bold">Patient Management & Triage</h2>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-xs px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full flex items-center">
+                                        <span class="material-icons text-sm mr-1">volume_up</span> Voice Enabled
+                                    </button>
+                                    <button class="text-xs px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full flex items-center">
+                                        <span class="material-icons text-sm mr-1">translate</span> Multilingual
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <h3 class="text-md font-semibold">Patient Registration</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Name <span class="text-red-500">Required</span></label>
+                                        <input id="patient-name" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" type="text" />
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Age</label>
+                                        <input id="patient-age" min="0" oninput="if(this.value < 0) this.value = 0;" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" type="number" />
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Sex</label>
+                                        <select id="patient-sex" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                            <option value="" disabled selected>Select sex</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Visit Type</label>
+                                        <select id="patient-visit" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                            <option value="" disabled selected>Select visit type</option>
+                                            <option value="Emergency">Emergency</option>
+                                            <option value="Acute">Acute</option>
+                                            <option value="Routine">Routine</option>
+                                            <option value="Follow-up">Follow-up</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Symptoms</label>
+                                    <div class="relative mt-1">
+                                        <textarea id="patient-symptoms" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" rows="2"></textarea>
+                                        <span class="material-icons absolute right-3 top-3 text-gray-400">mic</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Vitals (e.g., BP:120/80, Temp:37.2)</label>
+                                    <div class="relative mt-1">
+                                        <input id="patient-vitals" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" type="text" placeholder="e.g. BP:120/80; Temp:37.2" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Medical History (comma or newline separated)</label>
+                                    <div class="relative mt-1">
+                                        <textarea id="patient-medical-history" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" rows="2" placeholder="e.g. Hypertension, Diabetes"></textarea>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end space-x-4">
+                                    <button class="px-6 py-2 border border-primary text-primary rounded-lg font-semibold">Save Draft</button>
+                                    <button id="start-triage" type="button" class="px-6 py-2 bg-primary text-white rounded-lg font-semibold flex items-center">
+                                        <span class="material-icons mr-2">play_arrow</span>
+                                        Start Triage
+                                    </button>
+                                </div>
+                                <div id="triage-result" class="mt-4 hidden bg-card-light dark:bg-card-dark p-3 rounded-lg">
+                                    <h4 class="font-semibold">Triage result</h4>
+                                    <div id="triage-urgency" class="mt-2"></div>
+                                    <div id="triage-actions" class="mt-2"></div>
+                                    <div id="triage-reasoning" class="mt-2 text-sm text-gray-600"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-card-dark p-6 rounded-lg shadow">
+                            <h2 class="text-lg font-bold mb-4">AI Triage Assistant</h2>
+                            <div class="space-y-4">
+                                <div id="triage-chat" class="space-y-3 max-h-56 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    </div>
+
+                                <div class="relative mt-2 flex items-center">
+                                    <input id="triage-input" class="flex-1 pr-24 rounded-lg border border-border-light dark:border-border-dark dark:bg-gray-700 focus:ring-primary focus:border-primary px-3 py-2" type="text" placeholder="Input patient ID" />
+                                    <button id="triage-send" class="ml-3 px-4 py-2 bg-primary text-white rounded-lg font-semibold text-sm">Send</button>
+                                    <div id="triage-loading" class="ml-2 hidden text-sm text-gray-500">Loading...</div>
+                                </div>
+                                <div class="flex justify-end space-x-2">
+                                    <button id="triage-clear" class="text-xs px-3 py-1 border border-gray-300 rounded-full">Clear Chat</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-white dark:bg-card-dark p-6 rounded-lg shadow">
+                            <h2 class="text-lg font-bold mb-4">Referral Generator</h2>
+                            <img alt="Map showing nearby hospitals" class="w-full h-48 object-cover rounded-lg mb-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgSPfil0q576LBE3MY8iemTgFft2TCls_6R7KZb5ZB0grRe9npieVwzXB7QSvDXmNUJU8sHDs-RJl5GJOnbJ1a6sDs5o2pb-QIHYpptJ5hRU821nS4r9gDuOkHkm_q5AotdlsXIjutCeEY1GUDV55p2sm2-G0PfDiRVgyeJTQqdfCCxBinI17VQ7BRV9_l5MIQZTZvbYz-rKEx2OWCq4FND-JUZ1DGoXaHS5iD9LS3ZA8zZfIE0zX7diX23y4VepMIPOSsVkMgA9A" />
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 border border-border-light dark:border-border-dark rounded-lg">
+                                    <div>
+                                        <h3 class="font-semibold">General Hospital Kura</h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Capacity: High • 15 min</p>
+                                    </div>
+                                    <button class="px-6 py-2 bg-primary text-white rounded-lg font-semibold">Select</button>
+                                </div>
+                                <div class="flex items-center justify-between p-3 border border-border-light dark:border-border-dark rounded-lg">
+                                    <div>
+                                        <h3 class="font-semibold">PHC Dawakin</h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Capacity: Medium • 25 min</p>
+                                    </div>
+                                    <button class="px-6 py-2 bg-primary text-white rounded-lg font-semibold">Select</button>
+                                </div>
+                                <div class="flex items-center justify-between p-3 border border-border-light dark:border-border-dark rounded-lg">
+                                    <div>
+                                        <h3 class="font-semibold">Teaching Hospital</h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Capacity: Low • 40 min</p>
+                                    </div>
+                                    <button class="px-6 py-2 bg-primary text-white rounded-lg font-semibold">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-card-dark p-6 rounded-lg shadow">
+                            <h2 class="text-lg font-bold mb-4">Queue & Forecast</h2>
+                            
+                            <div class="grid grid-cols-3 gap-4 text-center mb-6">
+                                <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg">
+                                    <p class="text-xs text-blue-800 dark:text-blue-200">Current Queue</p>
+                                    <p id="stat-queue-len" class="text-2xl font-bold text-blue-900 dark:text-blue-100">--</p>
+                                </div>
+                                <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg">
+                                    <p class="text-xs text-blue-800 dark:text-blue-200">Wait Time (min)</p>
+                                    <p id="stat-wait-time" class="text-2xl font-bold text-blue-900 dark:text-blue-100">--</p>
+                                </div>
+                                <div id="card-tomorrow-load" class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg transition-colors">
+                                    <p class="text-xs text-blue-800 dark:text-blue-200">Tomorrow Load</p>
+                                    <p id="stat-tomorrow-load" class="text-2xl font-bold text-blue-900 dark:text-blue-100">--</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="relative flex-1">
+                                    <input id="daily-total-input" 
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                                        placeholder="Total Patients Today (Attended + Queue)" 
+                                        type="number" />
+                                </div>
+                                <button onclick="workloadApp.submitDailyTotal()" 
+                                        class="px-6 py-2 bg-primary hover:bg-blue-700 text-white rounded-lg font-semibold whitespace-nowrap transition-colors shadow-sm">
+                                    Save & Close Day
+                                </button>
+                            </div>
+
+                            <div id="forecast-status-msg" class="p-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-lg text-sm text-center">
+                                Enter daily total to update AI Forecast
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="inventory" class="tab-content hidden">
+                    <section id="dash-inventory" class="bg-white dark:bg-card-dark p-6 rounded-lg shadow min-h-[500px]">
+                        
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Inventory System</h2>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Manage stock and track orders</p>
+                            </div>
+
+                            <div class="flex bg-gray-100 dark:bg-gray-700 rounded p-1">
+                                <button id="inv-tab-stock" onclick="inventoryApp.switchView('stock')" class="px-4 py-2 rounded shadow bg-white dark:bg-gray-600 text-sm font-medium text-primary transition-all">
+                                    Stock Levels
+                                </button>
+                                <button id="inv-tab-history" onclick="inventoryApp.switchView('history')" class="px-4 py-2 rounded text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-white/50 transition-all">
+                                    Request History
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-600 pt-4 mb-4">
+                            
+                            <div id="toolbar-stock" class="flex items-center gap-2 w-full md:w-auto transition-opacity">
+                                <div class="flex items-center border dark:border-gray-600 rounded px-3 py-1.5 bg-gray-50 dark:bg-gray-800">
+                                    <span class="text-xs text-gray-500 mr-2">Low Stock Threshold:</span>
+                                    <input id="threshold-days" type="number" min="1" value="5" class="w-12 bg-transparent text-sm font-bold outline-none text-right">
+                                    <span class="text-xs text-gray-500 ml-1">days</span>
+                                </div>
+                                <button onclick="inventoryApp.loadStock()" class="p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded" title="Refresh">
+                                    <span class="material-icons">refresh</span>
+                                </button>
+                                <div class="flex-grow md:hidden"></div>
+                                <button onclick="inventoryApp.triggerAutoRestock()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded flex items-center text-sm font-medium shadow-sm">
+                                    <span class="material-icons text-sm mr-2">auto_fix_high</span> Auto-Restock
+                                </button>
+                            </div>
+
+                            <div id="toolbar-history" class="hidden flex items-center gap-2 w-full md:w-auto transition-opacity">
+                                <select id="filter-status" onchange="inventoryApp.loadHistory()" class="px-3 py-1.5 rounded border dark:border-gray-600 dark:bg-gray-700 text-sm focus:ring-primary">
+                                    <option value="all">All Statuses</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="declined">Declined</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                                <button onclick="inventoryApp.loadHistory()" class="p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded" title="Refresh">
+                                    <span class="material-icons">refresh</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            
+                            <div id="view-stock" class="overflow-x-auto">
+                                <table class="min-w-full text-sm text-left">
+                                    <thead class="bg-gray-50 dark:bg-gray-700 text-gray-500 font-medium border-b dark:border-gray-600">
+                                        <tr>
+                                            <th class="px-4 py-3">Item Name</th>
+                                            <th class="px-4 py-3 text-center">Current Stock</th>
+                                            <th class="px-4 py-3 text-center">Daily Use</th>
+                                            <th class="px-4 py-3 text-center">Est. Days Left</th>
+                                            <th class="px-4 py-3 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-stock" class="divide-y divide-gray-100 dark:divide-gray-700">
+                                        </tbody>
+                                </table>
+                            </div>
+
+                            <div id="view-history" class="hidden overflow-x-auto">
+                                <table class="min-w-full text-sm text-left">
+                                    <thead class="bg-gray-50 dark:bg-gray-700 text-gray-500 font-medium border-b dark:border-gray-600">
+                                        <tr>
+                                            <th class="px-4 py-3">Date</th>
+                                            <th class="px-4 py-3">Item</th>
+                                            <th class="px-4 py-3 text-center">Qty</th>
+                                            <th class="px-4 py-3 text-center">Status</th>
+                                            <th class="px-4 py-3">Comments</th>
+                                            <th class="px-4 py-3 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-history" class="divide-y divide-gray-100 dark:divide-gray-700">
+                                        </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 border-t dark:border-gray-700 pt-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-red-100 text-red-600 rounded-lg"><span class="material-icons">warning</span></div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Low Stock Items</p>
+                                    <p id="stat-low" class="text-xl font-bold">0</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-yellow-100 text-yellow-600 rounded-lg"><span class="material-icons">hourglass_empty</span></div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Pending Requests</p>
+                                    <p id="stat-pending" class="text-xl font-bold">0</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-green-100 text-green-600 rounded-lg"><span class="material-icons">local_shipping</span></div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Approved/Incoming</p>
+                                    <p id="stat-approved" class="text-xl font-bold">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="reports" class="tab-content hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">       
+                        <div class="bg-white dark:bg-card-dark p-6 rounded-lg shadow h-fit">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Monthly Reports</h2>
+                                <button onclick="reportsApp.generateReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded text-sm flex items-center shadow-sm">
+                                    <span class="material-icons text-sm mr-2">auto_awesome</span> Generate AI Report
+                                </button>
+                            </div>
+                            
+                            <div id="report-list" class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                                <div class="text-gray-500 text-sm italic">Loading reports...</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-card-dark p-6 rounded-lg shadow h-fit">
+                            <h2 class="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">Log Facility Issue</h2>
+                            
+                            <form id="issue-form" class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Category</label>
+                                        <select id="issue-cat" class="w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-sm">
+                                            <option>Water Supply</option>
+                                            <option>Electricity/Power</option>
+                                            <option>Medical Equipment</option>
+                                            <option>Building Infrastructure</option>
+                                            <option>Staffing Shortage</option>
+                                            <option>Security</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Priority</label>
+                                        <select id="issue-priority" class="w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-sm">
+                                            <option value="Low">Low</option>
+                                            <option value="Medium" selected>Medium</option>
+                                            <option value="High">High (Urgent)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description</label>
+                                    <textarea id="issue-desc" rows="3" class="w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-sm" placeholder="Describe the issue in detail..."></textarea>
+                                </div>
+
+                                <div class="flex justify-end">
+                                    <button type="submit" class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded text-sm font-medium transition-colors">
+                                        Submit Issue
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div class="mt-6 border-t pt-4">
+                                <h3 class="text-sm font-bold text-gray-500 uppercase mb-2">Recent Issues</h3>
+                                <div id="issue-history" class="space-y-2 text-sm">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="success-overlay" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-40">
+        <div class="bg-white dark:bg-card-dark p-5 rounded-lg shadow-lg flex items-center space-x-4 cursor-pointer">
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-700">
+                <span class="material-icons" style="font-size:28px">check</span>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-900 dark:text-text-dark">Logged successfully</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Patient ID: <span id="success-overlay-id" class="font-mono">#</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-5 right-5 space-y-2">
+        <div id="toast-restock-sent" class="hidden bg-green-500 text-white py-2 px-4 rounded-lg shadow-md">
+            Restock Request Sent
+        </div>
+        <div id="toast-stock-updated" class="hidden bg-green-500 text-white py-2 px-4 rounded-lg shadow-md">
+            Stock Updated Successfully
+        </div>
+    </div>
+
+    
+
+    <div id="modal-restock" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm px-4">
+        <div class="bg-white dark:bg-card-dark rounded-lg shadow-xl w-full max-w-sm p-6 transform transition-all">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-restock-title" class="text-lg font-bold dark:text-gray-100">Request Restock</h3>
+                <button onclick="document.getElementById('modal-restock').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            
+            <input type="hidden" id="req-id"> <form onsubmit="event.preventDefault(); inventoryApp.submitRequest();" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Item Name</label>
+                    <input id="req-item-name" type="text" readonly class="w-full bg-gray-100 dark:bg-gray-700 border-none rounded px-3 py-2 text-gray-600 dark:text-gray-300 cursor-not-allowed font-medium">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Quantity Needed</label>
+                    <input id="req-qty" type="number" min="1" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded px-3 py-2 focus:ring-primary focus:border-primary">
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6 pt-4 border-t dark:border-gray-700">
+                    <button type="button" onclick="document.getElementById('modal-restock').classList.add('hidden')" class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium text-sm">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded font-medium shadow-sm hover:bg-blue-700 transition-colors text-sm">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="modal-report-editor" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm px-4">
+        <div class="bg-white dark:bg-card-dark rounded-lg shadow-xl w-full max-w-2xl flex flex-col max-h-[90vh]">
+            
+            <div class="px-6 py-4 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Edit Monthly Report</h3>
+                <span id="report-status-badge" class="px-2 py-1 rounded text-xs font-bold bg-yellow-100 text-yellow-800">DRAFT</span>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-1">
+                <input type="hidden" id="edit-report-id">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Report Content (AI Generated)</label>
+                <textarea id="edit-report-content" class="w-full h-64 p-4 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 font-mono text-sm leading-relaxed focus:ring-primary focus:border-primary"></textarea>
+                <p class="text-xs text-gray-400 mt-2">You can edit any inaccuracies in the AI summary before submitting.</p>
+            </div>
+
+            <div class="px-6 py-4 border-t dark:border-gray-700 flex justify-end gap-3 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
+                <button onclick="document.getElementById('modal-report-editor').classList.add('hidden')" class="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded text-sm font-medium">Close</button>
+                <button onclick="reportsApp.saveDraft()" class="px-4 py-2 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 rounded text-sm font-medium">Save Draft</button>
+                <button onclick="reportsApp.submitReport()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium shadow-sm">Submit to LGA</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    
+    <script src="frontline.js"></script>
+
+</body>
+</html>

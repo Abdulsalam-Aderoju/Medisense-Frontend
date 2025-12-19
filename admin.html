@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PHC Admin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>.material-icons{font-size:inherit} .tab-active{color:#1E40AF; border-bottom: 2px solid #1E40AF; background: #EFF6FF;}</style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-[Roboto]">
+    <div class="flex h-screen" id="app">
+        <aside class="w-64 bg-white shadow-md z-20 flex flex-col">
+            <div class="p-6 border-b flex justify-center">
+                <h1 class="text-xl font-bold text-blue-800">LGA Admin</h1>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center p-3 text-sm rounded hover:bg-gray-100 transition-colors">
+                    <span class="material-icons mr-3">home</span> Dashboard
+                </button>
+                <button onclick="switchTab('restock')" id="nav-restock" class="w-full flex items-center p-3 text-sm rounded hover:bg-gray-100 transition-colors">
+                    <span class="material-icons mr-3">inventory_2</span> Restock Requests
+                </button>
+                <button onclick="switchTab('reports')" id="nav-reports" class="w-full flex items-center p-3 text-sm rounded hover:bg-gray-100 transition-colors">
+                    <span class="material-icons mr-3">assignment</span> Reports & Issues
+                </button>
+            </nav>
+            <div class="p-4 border-t">
+                <button onclick="logout()" class="w-full flex items-center p-3 text-sm text-red-600 rounded hover:bg-red-50">
+                    <span class="material-icons mr-3">logout</span> Logout
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto">
+            <header class="bg-white shadow-sm sticky top-0 z-10 px-8 py-4 flex justify-between items-center">
+                <h2 class="text-lg font-bold text-gray-700" id="page-title">Dashboard</h2>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-sm font-bold">Admin User</div>
+                        <div class="text-xs text-gray-500">Ikorodu LGA</div>
+                    </div>
+                    <div class="h-10 w-10 rounded-full bg-blue-800 text-white flex items-center justify-center font-bold">A</div>
+                </div>
+            </header>
+
+            <div class="p-8">
+                
+                <div id="view-restock" class="view-section">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-yellow-500">
+                            <div class="text-gray-500 text-sm font-medium">Pending Requests</div>
+                            <div class="text-3xl font-bold mt-1" id="count-pending">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-red-500">
+                            <div class="text-gray-500 text-sm font-medium">Open Issues</div>
+                            <div class="text-3xl font-bold mt-1" id="count-issues">0</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-blue-500">
+                            <div class="text-gray-500 text-sm font-medium">Reports (This Month)</div>
+                            <div class="text-3xl font-bold mt-1" id="count-reports">0</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-6 border-b flex justify-between items-center">
+                            <h3 class="font-bold text-lg">Incoming Restock Requests</h3>
+                            
+                            <div class="flex gap-2">
+                                <select id="filter-status" class="border rounded px-3 py-1 text-sm bg-gray-50">
+                                    <option value="all">All Status</option>
+                                    <option value="pending" selected>Pending</option>
+                                    <option value="approved">Approved</option>
+                                </select>
+                                <button onclick="adminApp.fetchRequests()" class="text-gray-500 hover:text-blue-600"><span class="material-icons">refresh</span></button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-gray-500 font-medium border-b">
+                                    <tr>
+                                        <th class="px-6 py-3">Date</th>
+                                        <th class="px-6 py-3">PHC Name</th>
+                                        <th class="px-6 py-3">Item</th>
+                                        <th class="px-6 py-3 text-center">Qty</th>
+                                        <th class="px-6 py-3 text-center">Priority</th>
+                                        <th class="px-6 py-3 text-center">Status</th>
+                                        <th class="px-6 py-3 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="restock-tbody" class="divide-y"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-reports" class="view-section hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        
+                        <div class="bg-white rounded-lg shadow h-fit">
+                            <div class="p-5 border-b flex justify-between items-center bg-red-50">
+                                <h3 class="font-bold text-red-800 flex items-center">
+                                    <span class="material-icons mr-2">report_problem</span> Facility Issues
+                                </h3>
+                                <button onclick="adminApp.fetchIssues()" class="text-red-600"><span class="material-icons">refresh</span></button>
+                            </div>
+                            <div class="p-0 max-h-[600px] overflow-y-auto" id="issues-list">
+                                </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow h-fit">
+                            <div class="p-5 border-b flex justify-between items-center bg-blue-50">
+                                <h3 class="font-bold text-blue-800 flex items-center">
+                                    <span class="material-icons mr-2">description</span> Monthly Reports
+                                </h3>
+                                <button onclick="adminApp.fetchReports()" class="text-blue-600"><span class="material-icons">refresh</span></button>
+                            </div>
+                            <div class="p-0 max-h-[600px] overflow-y-auto" id="reports-list">
+                                </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-report" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b flex justify-between items-center">
+                <h3 class="font-bold text-lg" id="modal-title">Report Content</h3>
+                <button onclick="document.getElementById('modal-report').classList.add('hidden')" class="text-gray-500 hover:text-gray-800"><span class="material-icons">close</span></button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 bg-gray-50">
+                <div id="modal-content" class="prose prose-sm max-w-none whitespace-pre-wrap"></div>
+            </div>
+            <div class="p-4 border-t text-right">
+                <button onclick="document.getElementById('modal-report').classList.add('hidden')" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-sm font-bold text-gray-700">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        function logout() { localStorage.clear(); window.location.href='login.html'; }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('aside nav button').forEach(el => el.classList.remove('bg-blue-50', 'text-blue-700', 'font-bold'));
+            
+            if(tab === 'dashboard' || tab === 'restock') {
+                document.getElementById('view-restock').classList.remove('hidden');
+                document.getElementById('nav-restock').classList.add('bg-blue-50', 'text-blue-700', 'font-bold');
+                document.getElementById('page-title').innerText = "Dashboard & Inventory";
+                adminApp.fetchRequests();
+            } else if (tab === 'reports') {
+                document.getElementById('view-reports').classList.remove('hidden');
+                document.getElementById('nav-reports').classList.add('bg-blue-50', 'text-blue-700', 'font-bold');
+                document.getElementById('page-title').innerText = "Reports & Facility Issues";
+                adminApp.fetchIssues();
+                adminApp.fetchReports();
+            }
+        }
+        // Init
+        switchTab('dashboard');
+    </script>
+</body>
+</html>

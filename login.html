@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Signup - MediSense</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #071025;
+            --bg-card: #0b1220;
+            --text-light: #e6f0fb;
+            --text-muted: #a7bfd6;
+            --border-color: #ffffff2a;
+            --gradient-01: #1f0dce;
+            --gradient-02: #32bcfa;
+            --pink-color: #ff94ff;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: linear-gradient(180deg, var(--bg-dark) 0%, #0b1220 100%);
+        }
+        .auth-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(2, 6, 23, 0.5);
+            width: min(420px, 90%);
+            overflow: hidden;
+            position: relative;
+        }
+        .auth-header {
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .auth-header h1 {
+            font-family: 'Onest', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--gradient-02), var(--pink-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .auth-body {
+            padding: 2rem 1.75rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group.hidden {
+            display: none;
+        }
+        
+        /* Generic hidden helper used by JS for non-form-group elements too */
+        .hidden {
+            display: none;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--gradient-02);
+            box-shadow: 0 0 0 3px rgba(50, 188, 250, 0.3);
+        }
+        .form-group select {
+             -webkit-appearance: none;
+             -moz-appearance: none;
+             appearance: none;
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a7bfd6' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+             background-repeat: no-repeat;
+             background-position: right 0.75rem center;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            background: linear-gradient(90deg, var(--gradient-01), var(--gradient-02));
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(50, 188, 250, 0.25);
+        }
+        .toggle-auth {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        .toggle-auth button {
+            background: none;
+            border: none;
+            color: var(--gradient-02);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+        #error-message {
+            color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1 id="form-title" data-i18n="sign_in">Sign In</h1>
+            <!-- language selector -->
+            <select id="lang-select" class="absolute top-4 right-4 px-2 py-1 rounded text-sm">
+                <option value="en">EN</option>
+                <option value="yo">YO</option>
+                <option value="sw">SW</option>
+                <option value="ha">HA</option>
+                <option value="fr">FR</option>
+            </select>
+        </div>
+        <div class="auth-body">
+            <form id="auth-form">
+                <div id="error-message" class="hidden"></div>
+
+                <div class="form-group hidden" id="full-name-group">
+                    <label for="full_name">Full Name/PHC Name</label>
+                    <input type="text" id="full_name" name="full_name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-group" id="operator-group">
+                    <label for="operator_name">Operator Name (e.g., Dr. Sitba)</label>
+                    <input type="text" id="operator_name" name="operator_name">
+                </div>
+
+                <div class="form-group hidden" id="role-group">
+                    <label for="role">Your Role</label>
+                    <select id="role" name="role">
+                        <option value="phc">Frontline Worker (PHC)</option>
+                        <option value="lga">Healthcare Admin (LGA)</option>
+                    </select>
+                </div>
+
+                <div class="form-group hidden" id="lga-group">
+                    <label for="lga_id">LGA ID</label>
+                    <input type="text" id="lga_id" name="lga_id" placeholder="e.g. lga-ikorodu">
+                </div>
+
+                <div class="form-group hidden" id="phc-group">
+                    <label for="phc_id">PHC ID</label>
+                    <input type="text" id="phc_id" name="phc_id" placeholder="e.g. phc-001">
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-button" data-i18n="sign_in_btn">Sign In</button>
+            </form>
+
+            <div class="toggle-auth">
+                <span id="toggle-text" data-i18n="dont_have_account">Don't have an account?</span>
+                <button id="toggle-button" type="button" data-i18n="sign_up_btn">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="login.js"></script>
+    
+</body>
+</html>
